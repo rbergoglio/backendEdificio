@@ -43,8 +43,23 @@ async function addUsuario(usuario){
     }
 }
 
+
+async function deleteUsuario(idUsuario){
+    try{
+        let pool = await sql.connect(config)
+        let usuario = await pool.request()
+            .input('input_parameter',sql.Int,idUsuario)
+            .query("DELETE FROM Usuarios")
+        return usuario.recordsets;
+    }
+    catch(error){
+        console.log(error);
+    }
+}
+
 module.exports = {
     getUsuarios : getUsuarios,
     getUsuario : getUsuario,
-    addUsuario : addUsuario
+    addUsuario : addUsuario,
+    deleteUsuario : deleteUsuario
 }
