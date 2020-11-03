@@ -33,6 +33,14 @@ router.route('/usuario/:id').get((request,response)=>{
     })
 })
 
+router.route('/usuario').post((request,response)=>{
+
+    let usuario = {... request.body}
+    dboperations.addUsuario(usuario).then(result => {
+        response.status(201).json(result);
+    })
+})
+
 
 var port = process.env.PORT || 8090;
 app.listen(port);

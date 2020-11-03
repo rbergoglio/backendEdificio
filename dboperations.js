@@ -35,10 +35,8 @@ async function addUsuario(usuario){
             .input('Apellido',sql.NVarChar,usuario.Apellido)
             .input('mail',sql.NVarChar,usuario.mail)
             .input('contraseña',sql.NVarChar,usuario.contraseña)
-            .query("INSERT INTO Usuarios VALUES('1','Ramiro','Bergoglio','ramiro.bergoglio@gmail.com','contraseña')")
-            // el execute sirve para usar un procedure guardado en la base de datos
-            //.execute('InsertUsers');
-        return insertProduct.recordsets;
+            .query("INSERT INTO Usuarios VALUES( @id , @Nombre ,@Apellido,@mail,@contraseña)")
+        return insertUsuario.recordsets;
     }
     catch(error){
         console.log(error);
