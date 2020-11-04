@@ -49,7 +49,7 @@ async function deleteUsuario(idUsuario){
         let pool = await sql.connect(config)
         let usuario = await pool.request()
             .input('input_parameter',sql.Int,idUsuario)
-            .query("DELETE FROM Usuarios")
+            .query("DELETE FROM Usuarios WHERE id = @input_parameter")
         return usuario.recordsets;
     }
     catch(error){
@@ -57,9 +57,26 @@ async function deleteUsuario(idUsuario){
     }
 }
 
+/*
+async function getDeptoUsuario(idUsuario){
+    try{
+        let pool = await sql.connect(config)
+        let usuario = await pool.request()
+            .input('input_parameter',sql.Int,idUsuario)
+            .query("SELECT Depto.idDepto, Edificio.idEdificio, Piso, Nro, Edificio.Nombre, Direccion FROM Usuarios JOIN Deptos on (Deptos.idDepto = Usuarios.idUsuario) JOIN Edifcios on (Edificios.idEdificio = Depto.idEdificio) WHERE Usuarios.id = @input_parameter")
+        return usuario.recordsets;
+    }
+    catch(error){
+        console.log(error);
+    }
+}
+*/
+
 module.exports = {
     getUsuarios : getUsuarios,
     getUsuario : getUsuario,
     addUsuario : addUsuario,
-    deleteUsuario : deleteUsuario
+    deleteUsuario : deleteUsuario/*,
+    getDeptoUsuario : getDeptoUsuario
+    */
 }

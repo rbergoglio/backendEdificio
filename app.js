@@ -46,8 +46,13 @@ router.route('/usuario/:id').delete((request,response)=>{
         response.json(result);
     })
 })
-
-
+/*
+router.route('/usuario/deptos/:id').get((request,response)=>{
+    dboperations.getDeptoUsuario(request.params.id).then(result => {
+        response.json(result[0]);
+    })
+})
+*/
 var port = process.env.PORT || 8090;
 app.listen(port);
 console.log('Order API is running at ' + port);
