@@ -1,42 +1,48 @@
 var config = require('./dbconfig');
 const sql = require('mssql');
 
-
-async function getUsuarios(){
+const bcrypt = require('bcryptjs')
+/*
+const bcrypt = require('bcrypt')
+*/
+async function getUsers(){
     try{
         let pool = await sql.connect(config)
-        let usuarios = await pool.request().query("SELECT * FROM Usuarios")
-        return usuarios.recordsets;
+        let users = await pool.request().query("SELECT * FROM Users")
+        return users.recordsets;
     }
     catch(error){
         console.log(error);
     }
 }
 
-async function getUsuario(idUsuario){
+async function getUser(idUser){
     try{
         let pool = await sql.connect(config)
-        let usuario = await pool.request()
-            .input('input_parameter',sql.Int,idUsuario)
-            .query("SELECT * FROM Usuarios WHERE id = @input_parameter")
-        return usuario.recordsets;
+        let user = await pool.request()
+            .input('input_parameter',sql.Int,idUser)
+            .query("SELECT * FROM Users WHERE idUser = @input_parameter")
+        return user.recordsets;
     }
     catch(error){
         console.log(error);
     }
 }
 
-async function addUsuario(usuario){
+async function addUser(user){
     try{
         let pool = await sql.connect(config);
-        let insertUsuario= await pool.request()
-            .input('id',sql.Int,usuario.id)
-            .input('Nombre',sql.NVarChar,usuario.Nombre)
-            .input('Apellido',sql.NVarChar,usuario.Apellido)
-            .input('mail',sql.NVarChar,usuario.mail)
-            .input('contraseña',sql.NVarChar,usuario.contraseña)
-            .query("INSERT INTO Usuarios VALUES( @id , @Nombre ,@Apellido,@mail,@contraseña)")
-        return insertUsuario.recordsets;
+        const hashedPassword = await bcrypt.hash(user.UserPassword, 10)
+        
+        let insertUser= await pool.request()
+            .input('LastName',sql.NVarChar,user.LastName)
+            .input('FirstName',sql.NVarChar,user.FirstName)
+            .input('UserType',sql.NVarChar,user.UserType)
+            .input('Mail',sql.VarChar,user.Mail)
+            .input('UserPassword',sql.NVarChar, hashedPassword)
+            .query("INSERT INTO Users (LastName, FirstName, UserType, Mail, UserPassword) VALUES(@LastName, @FirstName, @UserType, @Mail, @UserPassword)")
+        console.log(hashedPassword)    
+        return insertUser.recordsets;
     }
     catch(error){
         console.log(error);
@@ -44,13 +50,33 @@ async function addUsuario(usuario){
 }
 
 
-async function deleteUsuario(idUsuario){
+async function deleteUser(idUser){
     try{
         let pool = await sql.connect(config)
-        let usuario = await pool.request()
-            .input('input_parameter',sql.Int,idUsuario)
-            .query("DELETE FROM Usuarios WHERE id = @input_parameter")
-        return usuario.recordsets;
+        let user = await pool.request()
+            .input('input_parameter',sql.Int,idUser)
+            .query("DELETE FROM Users WHERE idUser = @input_parameter")
+        return user.recordsets;
+    }
+    catch(error){
+        console.log(error);
+    }
+}
+
+async function login(user){
+    try{
+        let pool = await sql.connect(config);
+        
+        let insertUser= await pool.request()
+            .input('mail',sql.NVarChar,user.Mail)
+            .query("SELECT Users.Mail, Users.UserPassword FROM Users WHERE Users.Mail = @mail")
+        console.log(insertUser.recordset[0].UserPassword)  
+        console.log(user.UserPassword)
+        if(await bcrypt.compare( user.UserPassword,insertUser.recordset[0].UserPassword)){
+            return "Success";
+        }else{
+            return "Error";
+        }
     }
     catch(error){
         console.log(error);
@@ -73,10 +99,15 @@ async function getDeptoUsuario(idUsuario){
 */
 
 module.exports = {
-    getUsuarios : getUsuarios,
-    getUsuario : getUsuario,
-    addUsuario : addUsuario,
-    deleteUsuario : deleteUsuario/*,
+    getUsers: getUsers,
+    getUser : getUser,
+    addUser : addUser,
+    deleteUser: deleteUser,
+    login: login
+    
+    
+    /*,
+    
     getDeptoUsuario : getDeptoUsuario
     */
 }

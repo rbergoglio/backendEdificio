@@ -1,6 +1,6 @@
 const dboperations = require('./dboperations')
 var DB = require('./dboperations')
-var Usuarios = require('./models/usuarios.model')
+var Users = require('./models/users.model')
 
 var express = require('express');
 var bodyParser = require('body-parser');
@@ -21,28 +21,37 @@ router.use((request,response,next)=>{
 
 })
 
-router.route('/usuarios').get((request,response)=>{
-    dboperations.getUsuarios().then(result => {
+router.route('/users').get((request,response)=>{
+    dboperations.getUsers().then(result => {
         response.json(result[0]);
     })
 })
 
-router.route('/usuario/:id').get((request,response)=>{
-    dboperations.getUsuario(request.params.id).then(result => {
+router.route('/users/:id').get((request,response)=>{
+    dboperations.getUser(request.params.id).then(result => {
         response.json(result[0]);
     })
 })
 
-router.route('/usuario').post((request,response)=>{
+/* Create user*/
+router.route('/users').post((request,response)=>{
 
-    let usuario = {... request.body}
-    dboperations.addUsuario(usuario).then(result => {
+    let user = {... request.body}
+    dboperations.addUser(user).then(result => {
         response.status(201).json(result);
     })
 })
 
-router.route('/usuario/:id').delete((request,response)=>{
-    dboperations.deleteUsuario(request.params.id).then(result => {
+router.route('/users/:id').delete((request,response)=>{
+    dboperations.deleteUser(request.params.id).then(result => {
+        response.json(result);
+    })
+})
+
+router.route('/users/login').post((request,response)=>{
+
+    let user = {... request.body}
+    dboperations.login(user).then(result => {
         response.json(result);
     })
 })
@@ -57,6 +66,6 @@ var port = process.env.PORT || 8090;
 app.listen(port);
 console.log('Order API is running at ' + port);
 
-dboperations.getUsuarios().then(result =>{
+dboperations.getUsers().then(result =>{
     console.log(result)
 })
