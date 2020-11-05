@@ -73,7 +73,7 @@ async function login(user){
         console.log(insertUser.recordset[0].UserPassword)  
         console.log(user.UserPassword)
         if(await bcrypt.compare( user.UserPassword,insertUser.recordset[0].UserPassword)){
-            return "Success";
+            return insertUser.recordset[0];
         }else{
             return "Error";
         }
